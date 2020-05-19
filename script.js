@@ -15,43 +15,80 @@
 The pilot and co-pilot names should be strings and the fuel level and cargo mass should be numbers.
 */
 document.addEventListener("DOMContentLoaded", function() {
+   //variable dictionary
    const pilotName = document.getElementById("pilotName");
    const coPilotName = document.getElementById("copilotName");
    const fuelLevel = document.getElementById("fuelLevel");
    const cargoMass = document.getElementById("cargoMass");
    const buttonPress = document.getElementById("launchForm");
+   let alertRequiredChanges = false;
+   let alertMessage = "Unable to process your information. \n";
 
-
-   buttonPress.addEventListener("submit", function() {
-      let alertRequiredChanges = false;
-      let alertMessage = "Unable to process your information. \n";
-      if ((pilotName.value === "") || (coPilotName.value === "") || (fuelLevel.value === "") || (cargoMass.value === "")) {
-         event.preventDefault();
+   //a doom-stack of functions
+   function isNanPilotName() {
+      if (isNaN(pilotName.value)) {
+         //send info
+         return alertMessage += "pilot is a string";
+      } else {
+         alertRequiredChanges = true;
+         alertMessage += "Pilot name needs to be a string of letters... \n";
       }
-      if ((isNaN(pilotName.value) === true) && (isNaN(coPilotName.value) === true) && (isNaN(fuelLevel.value) === false) && (isNaN(cargoMass.value)=== false)) {
-         alert("fuck ywh");
-         
-      } /*if (isNaN(pilotName.value) === false) {
-         alertRequiredChanges = true;
-         alertMessage += "Pilot name needs to be a string of letters, you robot-naming fool... \n";
-      } if (isNaN(coPilotName.value) === false) {
-         alertRequiredChanges = true;
-         alertMessage += "Co-pilot name needs to be a string of letters, you robot-naming fool... \n";
-      } if (isNaN(fuelLevel.value) === true) {
-         alertRequiredChanges = true;
-         alertMessage += "Fuel level name needs to be a string of letters, you robot-naming fool... \n";
-      } if (isNaN(cargoMass.value)=== true) {
-         alertRequiredChanges = true;
-         alertMessage += "Cargo mass name needs to be a string of letters, you robot-naming fool... \n";
-      }*/
+   }
 
+   function isNanCoPilotName() {
+      if (isNaN(coPilotName.value)) {
+         //send info
+         return alertMessage += "co-pilot is a string";
+      } else {
+         alertRequiredChanges = true;
+         alertMessage += "Co-pilot name needs to be a string of letters... \n";
+      }
+   }
 
+   function isNumberFuelLevel() {
+      if (isNaN(fuelLevel.value)) {
+         alertRequiredChanges = true;
+         alertMessage += "Fuel level name needs to be a number... \n";
+      } else {
+         //send info
+         alert("fuelLevel is a number");
+      }
+   }
+
+   function isNumberCargoMass() {
+      if (isNaN(cargoMass.value)) {
+         alertRequiredChanges = true;
+         alertMessage += "Cargo mass name needs to be a number... \n";
+      } else {
+         //send info
+         alert("cargoMass is a number");
+      }
+   }
+   
+
+   //the button hath been pressed
+   buttonPress.addEventListener("submit", function() {
+      //check if an input is empty and end script after alert message
+      if ((pilotName.value === "") || (coPilotName.value === "") || (fuelLevel.value === "") || (cargoMass.value === "")) {
+         alertRequiredChanges = true;
+         alertMessage += "Form inputs cannot be empty, you fool... \n";
+         alert(alertMessage);
+         return event.preventDefault();
+      }    
+      
+      //processing each form input's value
+      isNanPilotName();
+      isNanCoPilotName();
+      isNumberFuelLevel();
+      isNumberCargoMass();
+
+      //inform user of any problems or send the data
       if (alertRequiredChanges) {
          alert(alertMessage);
       } else {
-         alert("should send info now");
+         //send the data
       }
-      
+   
       
    })
 
