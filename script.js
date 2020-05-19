@@ -15,6 +15,8 @@
 document.addEventListener("DOMContentLoaded", function() {
 
    //variable dictionary
+   const missionTarget = document.getElementById('missionTarget');
+
    const pilotName = document.getElementById("pilotName");
    const coPilotName = document.getElementById("copilotName");
    const fuelLevel = document.getElementById("fuelLevel");
@@ -41,9 +43,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
       } else {
 
-         alertRequiredChanges = true;
          pilotStatus.innerText = `Pilot name needs to be a string of letters...`;
          pilotStatus.style.color = 'red';
+         return alertRequiredChanges = true;
 
       }
    }
@@ -57,9 +59,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
       } else {
 
-         alertRequiredChanges = true;
          coPilotStatus.innerText = `Co-pilot name needs to be a string of letters...`;
          coPilotStatus.style.color = 'red';
+         return alertRequiredChanges = true;
 
       }
    }
@@ -68,17 +70,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
       if (isNaN(fuelLevel.value)) {
 
-         alertRequiredChanges = true;
          fuelStatus.innerText =  `Fuel level name needs to be a number...`;
          fuelStatus.style.color = 'red';
+         return alertRequiredChanges = true;
 
       } if (fuelLevel.value < 10000) {
 
-         //launchStatus.style.color = 'red';
-         //launchStatus.innerText = 'Shuttle not ready for launch!';
          fuelStatus.innerText =  `Fuel levels too low: ${fuelLevel.value} liters`;
          fuelStatus.style.color = 'red';
-         alertRequiredChanges = true;
+         return alertRequiredChanges = true;
 
       } else {
 
@@ -92,16 +92,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
       if (isNaN(cargoMass.value)) {
 
-         alertRequiredChanges = true;
          cargoStatus.innerText = `Cargo mass name needs to be a number...`;
          cargoStatus.style.color = 'red';
+         return alertRequiredChanges = true;
 
       } if (cargoMass.value > 10000) {
-         //launchStatus.style.color = 'red';
-         //launchStatus.innerText = 'Shuttle not ready for launch!';
+         
          cargoStatus.innerText =  `Cargo mass too heavy: ${cargoMass.value} kilograms`;
          cargoStatus.style.color = 'red';
-         alertRequiredChanges = true;
+         return alertRequiredChanges = true;
+
       } else {
          
          cargoStatus.innerText = `Cargo mass nominal: ${cargoMass.value} kilograms`;
@@ -110,23 +110,28 @@ document.addEventListener("DOMContentLoaded", function() {
       }
    }
 
-   //update css based on form inputs
-   function formIsValid() {
+   //the fetch of pooch-planet
+   fetch("https://handlers.education.launchcode.org/static/planets.json").then( function(response) {
 
-      displayDiv.style.visibility = 'visible';
-      launchStatus.style.color = 'green';
-      launchStatus.innerText = 'Shuttle is ready for launch!';
+               response.json().then( function(json) {
 
-   }
+                  let randomDestination = Math.floor(Math.random() * Math.floor(json.length));
 
-   function formIsNotValid() {
+                  missionTarget.innerHTML = `
+                     <h2>Mission Destination</h2>
+                     <ol>
+                        <li>Name: ${json[randomDestination].name}</li>
+                        <li>Diameter: ${json[randomDestination].diameter}</li>
+                        <li>Star: ${json[randomDestination].star}</li>
+                        <li>Distance from Earth: ${json[randomDestination].distance}</li>
+                        <li>Number of Moons: ${json[randomDestination].moons}</li>
+                     </ol>
+                     <img src="${json[randomDestination].image}">
+                  `;
 
-      displayDiv.style.visibility = 'visible';
+               });
 
-   }
-
-   
-   
+            });
 
    //the button hath been pressed
    buttonPress.addEventListener("submit", function() {
@@ -152,19 +157,17 @@ document.addEventListener("DOMContentLoaded", function() {
       isNumberFuelLevel();
       isNumberCargoMass();
 
-      //1) inform user of any problems or 2) send the data
+      //1) inform user of any problems or 2) launch the shuttle!
       if (alertRequiredChanges) {
          launchStatus.style.color = 'red';
          launchStatus.innerText = 'Shuttle not ready for launch!';
          displayDiv.style.visibility = 'visible';
-         formIsNotValid();
          return event.preventDefault();
 
       } else {
          displayDiv.style.visibility = 'visible';
          launchStatus.style.color = 'green';
          launchStatus.innerText = 'Shuttle is ready for launch!';
-         formIsValid();
          return event.preventDefault();
 
       }
