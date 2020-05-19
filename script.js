@@ -10,70 +10,140 @@
    <li>Number of Moons: ${}</li>
 </ol>
 <img src="${}">
-
-
-The pilot and co-pilot names should be strings and the fuel level and cargo mass should be numbers.
 */
+
 document.addEventListener("DOMContentLoaded", function() {
+
    //variable dictionary
    const pilotName = document.getElementById("pilotName");
    const coPilotName = document.getElementById("copilotName");
    const fuelLevel = document.getElementById("fuelLevel");
    const cargoMass = document.getElementById("cargoMass");
    const buttonPress = document.getElementById("launchForm");
+
+   const pilotStatus = document.getElementById('pilotStatus');
+   const coPilotStatus = document.getElementById('copilotStatus');
+   const fuelStatus = document.getElementById('fuelStatus');
+   const cargoStatus = document.getElementById('cargoStatus');
+   const displayDiv = document.getElementById('displayDiv');
+   const launchStatus = document.getElementById('launchStatus');
+
    let alertRequiredChanges = false;
-   let alertMessage = "Unable to process your information. \n";
+   let alertMessage = "";
 
    //a doom-stack of functions
    function isNanPilotName() {
+
       if (isNaN(pilotName.value)) {
-         //send info
-         return alertMessage += "pilot is a string";
+
+         pilotStatus.innerText = `Pilot ${pilotName.value} is ready!`;
+         pilotStatus.style.color = 'black';
+
       } else {
+
          alertRequiredChanges = true;
-         alertMessage += "Pilot name needs to be a string of letters... \n";
+         pilotStatus.innerText = `Pilot name needs to be a string of letters...`;
+         pilotStatus.style.color = 'red';
+
       }
    }
 
    function isNanCoPilotName() {
+
       if (isNaN(coPilotName.value)) {
-         //send info
-         return alertMessage += "co-pilot is a string";
+
+         coPilotStatus.innerText = `Co-Pilot ${coPilotName.value} is ready!`;
+         coPilotStatus.style.color = 'black';
+
       } else {
+
          alertRequiredChanges = true;
-         alertMessage += "Co-pilot name needs to be a string of letters... \n";
+         coPilotStatus.innerText = `Co-pilot name needs to be a string of letters...`;
+         coPilotStatus.style.color = 'red';
+
       }
    }
 
    function isNumberFuelLevel() {
+
       if (isNaN(fuelLevel.value)) {
+
          alertRequiredChanges = true;
-         alertMessage += "Fuel level name needs to be a number... \n";
+         fuelStatus.innerText =  `Fuel level name needs to be a number...`;
+         fuelStatus.style.color = 'red';
+
+      } if (fuelLevel.value < 10000) {
+
+         //launchStatus.style.color = 'red';
+         //launchStatus.innerText = 'Shuttle not ready for launch!';
+         fuelStatus.innerText =  `Fuel levels too low: ${fuelLevel.value} liters`;
+         fuelStatus.style.color = 'red';
+         alertRequiredChanges = true;
+
       } else {
-         //send info
-         alert("fuelLevel is a number");
+
+         fuelStatus.innerText =  `Fuel levels nominal: ${fuelLevel.value} liters`;
+         fuelStatus.style.color = 'black';
+
       }
    }
 
    function isNumberCargoMass() {
+
       if (isNaN(cargoMass.value)) {
+
          alertRequiredChanges = true;
-         alertMessage += "Cargo mass name needs to be a number... \n";
+         cargoStatus.innerText = `Cargo mass name needs to be a number...`;
+         cargoStatus.style.color = 'red';
+
+      } if (cargoMass.value > 10000) {
+         //launchStatus.style.color = 'red';
+         //launchStatus.innerText = 'Shuttle not ready for launch!';
+         cargoStatus.innerText =  `Cargo mass too heavy: ${cargoMass.value} kilograms`;
+         cargoStatus.style.color = 'red';
+         alertRequiredChanges = true;
       } else {
-         //send info
-         alert("cargoMass is a number");
+         
+         cargoStatus.innerText = `Cargo mass nominal: ${cargoMass.value} kilograms`;
+         cargoStatus.style.color = 'black';
+
       }
    }
+
+   //update css based on form inputs
+   function formIsValid() {
+
+      displayDiv.style.visibility = 'visible';
+      launchStatus.style.color = 'green';
+      launchStatus.innerText = 'Shuttle is ready for launch!';
+
+   }
+
+   function formIsNotValid() {
+
+      displayDiv.style.visibility = 'visible';
+
+   }
+
+   
    
 
    //the button hath been pressed
    buttonPress.addEventListener("submit", function() {
+      
+      alertRequiredChanges = false;
+      alertMessage = "Unable to process your information. \n";
+      launchStatus.style.color = 'black';
+      launchStatus.innerText = 'Awaiting Information Before Launch';
+
       //check if an input is empty and end script after alert message
       if ((pilotName.value === "") || (coPilotName.value === "") || (fuelLevel.value === "") || (cargoMass.value === "")) {
+
          alertRequiredChanges = true;
          alertMessage += "Form inputs cannot be empty, you fool... \n";
          alert(alertMessage);
          return event.preventDefault();
+
       }    
       
       //processing each form input's value
@@ -82,19 +152,23 @@ document.addEventListener("DOMContentLoaded", function() {
       isNumberFuelLevel();
       isNumberCargoMass();
 
-      //inform user of any problems or send the data
+      //1) inform user of any problems or 2) send the data
       if (alertRequiredChanges) {
-         alert(alertMessage);
+         launchStatus.style.color = 'red';
+         launchStatus.innerText = 'Shuttle not ready for launch!';
+         displayDiv.style.visibility = 'visible';
+         formIsNotValid();
+         return event.preventDefault();
+
       } else {
-         //send the data
+         displayDiv.style.visibility = 'visible';
+         launchStatus.style.color = 'green';
+         launchStatus.innerText = 'Shuttle is ready for launch!';
+         formIsValid();
+         return event.preventDefault();
+
       }
    
-      
-   })
-
-
-
-
-
+   });
 
 });

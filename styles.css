@@ -6,7 +6,7 @@ div {
     text-align: left;
 }
 
-#faultyItems {
+#displayDiv {
     visibility: hidden;   
 }
 
